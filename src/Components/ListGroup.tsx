@@ -11,20 +11,16 @@ function ListGroup({ heading }: Props) {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const tasks = await readTasks();
-      setTasks(tasks);
+      const tasks = await readTasks(); // read the tasks from the server
+      setTasks(tasks); // update the tasks
     };
     fetchTasks();
   }, []);
 
   const handleCheckboxClick = (index: number) => {
     const newTasks = [...tasks];
-    newTasks[index].status = 'completed';
-    setTasks(newTasks);
-  }
-
-  const handleItemClick = (index: number) => {
-    setSelectedIndex(index);
+    newTasks[index].status = 'completed'; // mark the task as completed
+    setTasks(newTasks); // update the tasks
   }
 
   return (
@@ -36,7 +32,7 @@ function ListGroup({ heading }: Props) {
       <ul className="list-group">
         {tasks.map((task, index) => (
           <li className={`list-group-item ${task.status === 'completed' ? 'disabled' : ''}`} key={task.id}
-              onClick={() => handleItemClick(index)}>
+              onClick={() => setSelectedIndex(index)}>
             <input className="form-check-input me-1" type="checkbox" value="" id={`checkbox${index}`} 
                    checked={task.status === 'completed'}
                    onChange={(e) => {
@@ -53,6 +49,5 @@ function ListGroup({ heading }: Props) {
 
 export default ListGroup;
 
-
 // make use of an external file to store the tasks and which ones are done
-// for some reason it tells the user the tasks 2 times
+// make node js server with express to save and read the tasks then you can make a post request to save the tasks

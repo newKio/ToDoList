@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <div><ListGroup heading="To-Do List" items={items}/></div>
+      <div><ListGroup heading="To-Do List"/></div>
     </>
   )
 }
