@@ -34,8 +34,3 @@ Target Audience: Small to medium-sized businesses may not have the resources to 
 Revenue Models: You could consider multiple revenue streams such as subscriptions, offering premium features, partnerships with cybersecurity firms, or even consulting services.
 Educational Component: By providing educational resources, best practices, and updates, you not only help businesses protect themselves but also build trust and authority in the field.
 To further evaluate this idea, consider conducting market research to understand your potential customers' needs and what existing solutions might be lacking. You might also want to explore partnerships or consultations with cybersecurity experts to ensure that your app provides accurate and effective solutions.
-
-
-
-command to start the web server:
-cd C:\Users\dani_\Desktop\coding\reactLanguage\vite-project & npm run dev 

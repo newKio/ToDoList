@@ -6,13 +6,12 @@ export interface Task {
 
 export const readTasks = async (): Promise<Task[]> => {
   try {
-    const response = await fetch('/tasks.json');
+    const response = await fetch('http://localhost:3001/api/data');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const tasks: Task[] = await response.json();
     return tasks;
-    
   } catch (error) {
     console.error('Error reading tasks:', error);
     return [];
