@@ -7,7 +7,7 @@ https://www.youtube.com/watch?v=wIyHSOugGGw
 
 this is some links that can be of use. you need to plan how the app will be, and what info you will need to be written
 
-
+link to course for react from codewithmosh: https://codewithmosh.com/p/ultimate-react-part1
 
 Below is from ChatGPT
 
