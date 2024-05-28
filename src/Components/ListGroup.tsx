@@ -8,12 +8,14 @@ interface Props {
 export default function ListGroup({ heading }: Props) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [editingTaskDescription, setEditingTaskDescription] = useState('');
 
   useEffect(() => {
     const fetchTasks = async () => {
       const tasks = await readTasks(); // read the tasks from the server
-      setTasks(tasks); // update the tasks
-      setIsLoading(false);
+      setTasks(tasks); // update the tasks locally
+      setIsLoading(false); // set loading to false
     };
     fetchTasks();
   }, []);
@@ -69,6 +71,40 @@ export default function ListGroup({ heading }: Props) {
     }
   };
 
+  const handleEdit = (id: number, description: string) => {
+    setEditingTaskId(id);
+    setEditingTaskDescription(description);
+  };
+  
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingTaskDescription(event.target.value);
+  };
+  
+  const handleDescriptionBlur = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/data/${editingTaskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task: editingTaskDescription }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to update task: ${response.statusText}`);
+      }
+  
+      const updatedTasks = tasks.map(task =>
+        task.id === editingTaskId ? { ...task, task: editingTaskDescription } : task
+      );
+      setTasks(updatedTasks);
+      setEditingTaskId(null);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
+
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -89,29 +125,32 @@ export default function ListGroup({ heading }: Props) {
               onChange={(e) => {
                 e.stopPropagation(); // prevent the item click event from firing
                 // handleCheckboxClick(index);
-                handleChange(task.id, 'status', task.status === 'completed' ? 'not completed' : 'completed');
+                handleChange(task.id, 'status', task.status === 'completed' ? 'not completed' : 'completed'); // update the task status
               }}
             />
 
-            {/* <input
-              id={index.toString()}
-              type="text"
-              value={task.task}
-              onChange={e => handleChange(task.id, 'task', e.target.value)}
-              style={{ marginRight: '1em' }}
-            /> */}
-
-            {task.task}
-
-            {/* <button onClick={() => handleDelete(task.id)} style={{ marginRight: '1em', border: "none", background: 'none' }}>
-              <img src="/saveButton.png" alt="Delete" style={{ width: '20px', height: '20px' }} />
-            </button> */}
+            {editingTaskId === task.id ? ( // if the task is being edited show an input field otherwise show the task description
+              <input
+                type="text"
+                name={task.task}
+                value={editingTaskDescription}
+                onChange={handleDescriptionChange} // when the input value changes
+                onBlur={handleDescriptionBlur} // when the input loses focus
+                style={{ // style the input field with bottom border
+                  border: 'none',
+                  borderBottom: '1px solid black',
+                  outline: 'none',
+                }}
+              />
+              ) : (
+                task.task
+              )}
 
             <button title="Delete task" onClick={() => handleDelete(task.id)} style={{ marginLeft: '1em', border: "none", background: 'none' }}>
               <img src="/delete_icon.png" alt="Delete" style={{ width: '20px', height: '20px' }} />
             </button>
             
-            <button title="Edit task" style={{marginLeft: '1em', border: "none", background: 'none' }}>
+            <button title="Edit task" onClick={() => handleEdit(task.id, task.task)} style={{marginLeft: '1em', border: "none", background: 'none' }}>
               <img src="/edit_icon.png" alt="Edit" style={{ width: '20px', height: '20px' }} />
             </button>
           </li>
@@ -121,16 +160,6 @@ export default function ListGroup({ heading }: Props) {
   );
 }
 
-// change this code so its like your old one with the checkboxes and have button to edit then the user can edit the task, not imediately be able to change it
-// only after clicking the save button save the chagnes to the server
-// remove borders from the buttons
-
-
-
-
-// when you used chatgpt to change how the list is displayed, it fucked up the code, so you need to fix it (check old code if you have to to remember how it should look)
-// make so it uses that input tag when you are editing the task, but once done, it returns to the normal way of displaying the task
-// remove the border from the input, just one bar at the bottom is possible
-
-// you have the first button in each list item that is supposed to only show when you are editing the task, fix this. What needs to happen is when you press edit, the task becomes an 
-// input field (you have the code commented for this) and when the user presses the save button, it saves the changes and goes back to normal text, not input form
+// button for delete task is not working when the task is done (input field is disabled) - fix this so it can be deleted even if the task is done
+// make it so there is a save button?
+// when you edit, every key stroke is a new request to the server - fix this so it only sends the request when you click save
